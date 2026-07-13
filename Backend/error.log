@@ -1,0 +1,552 @@
+2026-06-26T13:28:07.553Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:07.570Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:07.582Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:07.596Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:11.708Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:11.726Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:11.739Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:11.749Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:20.130Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:20.143Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:20.151Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:20.161Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:24.280Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:24.288Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:24.294Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:24.307Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:28.386Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:28.403Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:32.494Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:32.503Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:36.586Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:36.593Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:37.071Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:38.271Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:39.504Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:40.700Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:40.705Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:41.090Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:41.169Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:42.346Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-26T13:28:42.641Z GET ALL ERROR: PrismaClientKnownRequestError: 
+Invalid `prisma[entity].findMany()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:31
+
+   7 const isGlobal = GLOBAL_MODELS.includes(entity);
+   8 const where = isGlobal ? {} : { tenantId };
+   9 
+→ 10 return await prisma[entity].findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:10:10)
+    at async exports.getAll (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:15:18)
+2026-06-27T05:28:25.232Z CREATE ERROR: PrismaClientValidationError: 
+Invalid `prisma[entity].create()` invocation in
+C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:27:31
+
+  24 if (entity === 'team' && createData.members) createData.members = parseInt(createData.members, 10) || 0;
+  25 if (entity === 'category' && createData.items) createData.items = parseInt(createData.items, 10) || 0;
+  26 
+→ 27 return await prisma[entity].create({
+       data: {
+         name: "ddd",
+         type: "dd",
+         items: "",
+                ~~
+         tenantId: "b0574017-9179-481a-8fb3-4ac5e1a2179c"
+       }
+     })
+
+Argument `items`: Invalid value provided. Expected Int, provided String.
+    at wn (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at $n.handleRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6958)
+    at $n.handleAndLogRequestError (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async exports.create (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.service.js:27:10)
+    at async exports.create (C:\Users\akira\OneDrive\Desktop\kiaan_Project\boiler-plate\backend\src\modules\master\master.controller.js:27:18)
