@@ -12,13 +12,15 @@ app.use(helmet());
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://192.168.1.23:3000',
   'http://192.168.1.23:5173'
 ];
 
 app.use(cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'apikey', 'x-api-key', 'x-project-ref', 'x-project-id']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

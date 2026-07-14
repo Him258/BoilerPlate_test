@@ -71,22 +71,22 @@ router.post('/logout', projectTenantMiddleware, projectAuthController.logout);
 // Refresh (Only for project users)
 router.post('/refresh', projectTenantMiddleware, projectAuthController.refresh);
 
-// Me (Dispatches control plane or project plane auth based on token type)
-router.get(
-  '/me',
-  (req, res, next) => {
-    if (isProjectToken(req)) {
-      return projectUserAuthMiddleware(req, res, (err) => {
-        if (err) return next(err);
-        return projectAuthController.me(req, res, next);
-      });
-    }
-    return authMiddleware(req, res, (err) => {
+// Me and Profile (Dispatches control plane or project plane auth based on token type)
+const meHandler = (req, res, next) => {
+  if (isProjectToken(req)) {
+    return projectUserAuthMiddleware(req, res, (err) => {
       if (err) return next(err);
-      return authController.me(req, res, next);
+      return projectAuthController.me(req, res, next);
     });
   }
-);
+  return authMiddleware(req, res, (err) => {
+    if (err) return next(err);
+    return authController.me(req, res, next);
+  });
+};
+
+router.get('/me', meHandler);
+router.get('/profile', meHandler);
 
 
 // Register (Only for control plane tenant signup, not project users)

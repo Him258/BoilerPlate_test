@@ -6,11 +6,10 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
   
-  // Create default tenant
   const tenant = await prisma.tenant.create({
     data: {
-      name: 'Kiaan Core HQ',
-      domain: 'hq.kiaan.core'
+      domain: 'hq.kiaan.core',
+      organization: 'Kiaan Core HQ'
     }
   });
 
@@ -23,8 +22,7 @@ async function main() {
       tenantId: tenant.id,
       email: 'admin@kiaan.com',
       passwordHash,
-      firstName: 'Super',
-      lastName: 'Admin'
+      name: 'Super Admin'
     }
   });
 

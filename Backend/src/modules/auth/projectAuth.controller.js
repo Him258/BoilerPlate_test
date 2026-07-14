@@ -42,8 +42,8 @@ exports.signup = async (req, res) => {
       return sendError(res, 'A valid email address is required', 'VALIDATION_ERROR', [], 400);
     }
 
-    if (typeof password !== 'string' || password.length < 6) {
-      return sendError(res, 'Password must be at least 6 characters long', 'VALIDATION_ERROR', [], 400);
+    if (typeof password !== 'string' || password.length < 1) {
+      return sendError(res, 'Password is required', 'VALIDATION_ERROR', [], 400);
     }
 
     const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
