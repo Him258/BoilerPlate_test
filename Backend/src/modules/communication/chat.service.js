@@ -5,7 +5,7 @@ exports.getChatUsers = async (tenantId, currentUserId) => {
   return await prisma.user.findMany({
     where: {
       tenantId,
-      status: 'ACTIVE',
+      status: { in: ['ACTIVE', 'Active', 'active'] },
       id: { not: currentUserId }
     },
     select: {

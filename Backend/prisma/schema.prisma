@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
 }
 
 datasource db {
@@ -623,6 +624,7 @@ model StorageFile {
   @@index([bucketId])
 }
 
+<<<<<<< HEAD
 
 model RlsPolicy {
   id         String   @id @default(uuid())
@@ -641,3 +643,22 @@ model RlsPolicy {
   @@index([projectId])
 }
 
+=======
+model Message {
+  id         String   @id @default(uuid())
+  tenantId   String
+  senderId   String
+  receiverId String
+  content    String   @db.Text
+  isRead     Boolean  @default(false)
+  status     String   @default("sent") // sent, delivered, read
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+
+>>>>>>> f46c917 (kiran)

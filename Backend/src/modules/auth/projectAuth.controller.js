@@ -32,7 +32,7 @@ const parseUserAgent = (ua) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     if (!email || !password) {
       return sendError(res, 'Email and password are required', 'VALIDATION_ERROR', [], 400);
@@ -53,7 +53,7 @@ exports.signup = async (req, res) => {
     // Call service with project context (attached by projectTenantMiddleware)
     const data = await projectAuthService.signup(
       req.project, 
-      { email, password }, 
+      { email, password, role }, 
       { ipAddress, browser: meta.browser, device: meta.device }
     );
     

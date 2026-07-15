@@ -74,6 +74,48 @@ exports.insertRecord = async (req, res) => {
 
     const record = await dataService.insertRecord(project, tableName, req.body);
 
+    // Trigger realtime notification trigger on socket
+    try {
+      const socketServer = require('../../socket/socketServer');
+      const notificationSocket = require('../../socket/notificationSocket');
+      const io = socketServer.getIO();
+      if (io) {
+        let title = 'New Entry Created';
+        let message = `A new record has been added to ${tableName}.`;
+        let type = 'General';
+
+        if (tableName === 'patients') {
+          title = 'New Patient Registered';
+          message = `${record.name || record.firstName || 'A new patient'} was successfully registered.`;
+          type = 'Patient';
+        } else if (tableName === 'appointments') {
+          title = 'Appointment Booked';
+          message = `A new appointment for ${record.patientName || 'Patient'} has been scheduled.`;
+          type = 'Appointment';
+        } else if (tableName === 'prescriptions') {
+          title = 'New Prescription';
+          message = `A new prescription has been issued.`;
+          type = 'Prescription';
+        } else if (tableName === 'lab_results' || tableName === 'labs') {
+          title = 'Lab Report Ready';
+          message = `A new lab report is available.`;
+          type = 'Lab';
+        } else if (tableName === 'billing' || tableName === 'invoices') {
+          title = 'Billing Issued';
+          message = `Invoice generated for $${record.amount || '0'}.`;
+          type = 'Billing';
+        } else if (tableName === 'emergency') {
+          title = 'EMERGENCY ALERT';
+          message = `Emergency incident reported!`;
+          type = 'Emergency';
+        }
+
+        await notificationSocket.sendNotification(io, project.tenantId, 'all', title, message, type);
+      }
+    } catch (err) {
+      console.warn('[DatabaseController] Failed to send socket notification:', err.message);
+    }
+
     // Audit Logging
     const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const actor = req.user ? (req.user.email || req.user.userId || req.user.sub) : 'Client User';

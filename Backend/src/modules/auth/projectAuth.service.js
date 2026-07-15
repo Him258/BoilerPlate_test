@@ -43,8 +43,9 @@ const logAuthEvent = async (client, { userId, email, action, ipAddress, device, 
 /**
  * Service to execute project-specific database authentication operations
  */
-exports.signup = async (project, { email, password }, meta = {}) => {
+exports.signup = async (project, { email, password, role }, meta = {}) => {
   const client = project.client;
+  const dbRole = role || 'authenticated';
 
   try {
     // 1. Check if user already exists
@@ -67,14 +68,14 @@ exports.signup = async (project, { email, password }, meta = {}) => {
       userId,
       email,
       hashedPassword,
-      'authenticated'
+      dbRole
     );
 
     // 4. Generate tokens
     const userObj = {
       id: userId,
       email,
-      role: 'authenticated',
+      role: dbRole,
       created_at: new Date(),
       updated_at: new Date()
     };

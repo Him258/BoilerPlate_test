@@ -18,9 +18,11 @@ exports.provisionDatabase = async ({ dbName, dbUsername, dbPassword }) => {
     // Note: Parameterized query for password is not supported by CREATE USER in MySQL raw DDL,
     // so we build it safely after enforcing strict string-checks.
     await prisma.$executeRawUnsafe(`CREATE USER '${dbUsername}'@'%' IDENTIFIED BY '${dbPassword}';`);
+    await prisma.$executeRawUnsafe(`CREATE USER '${dbUsername}'@'localhost' IDENTIFIED BY '${dbPassword}';`);
 
     console.log(`[Provisioning] Granting permissions on ${dbName} to ${dbUsername}`);
     await prisma.$executeRawUnsafe(`GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, REFERENCES ON \`${dbName}\`.* TO '${dbUsername}'@'%';`);
+    await prisma.$executeRawUnsafe(`GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, REFERENCES ON \`${dbName}\`.* TO '${dbUsername}'@'localhost';`);
     await prisma.$executeRawUnsafe('FLUSH PRIVILEGES;');
     
     console.log(`[Provisioning] Successfully provisioned ${dbName}`);
@@ -41,6 +43,7 @@ exports.deprovisionDatabase = async ({ dbName, dbUsername }) => {
 
     console.log(`[Deprovisioning] Dropping database user: ${dbUsername}`);
     await prisma.$executeRawUnsafe(`DROP USER IF EXISTS '${dbUsername}'@'%';`);
+    await prisma.$executeRawUnsafe(`DROP USER IF EXISTS '${dbUsername}'@'localhost';`);
     await prisma.$executeRawUnsafe('FLUSH PRIVILEGES;');
 
     console.log(`[Deprovisioning] Successfully deprovisioned ${dbName}`);
