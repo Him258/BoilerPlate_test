@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// API client removed for UI-only mode
+import { useTenants } from '@/hooks/useTenants';
+import { useBrandings } from '@/hooks/useBrandings';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2, Palette } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
@@ -17,20 +18,19 @@ const statusColor = (s) => {
 const emptyForm = { tenantId: '', primaryColor: '#6366F1', font: 'Inter', logoUrl: '', customCss: '', status: 'Active' };
 
 export function Branding() {
+  const { tenants, fetchTenants } = useTenants();
+  const { brandings, fetchBrandings, createBranding, updateBranding, deleteBranding } = useBrandings();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState([
-    { id: 1, tenantId: 1, primaryColor: '#EF4444', font: 'Inter', logoUrl: 'https://acme.com/logo.png', customCss: '', status: 'Active' },
-    { id: 2, tenantId: 2, primaryColor: '#3B82F6', font: 'Roboto', logoUrl: 'https://stark.com/logo.png', customCss: '', status: 'Draft' }
-  ]);
-  const [tenants, setTenants] = useState([
-    { id: 1, organization: 'Acme Corp' },
-    { id: 2, organization: 'Stark Industries' }
-  ]);
+
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed as we use local data
+  useEffect(() => {
+    fetchTenants();
+    fetchBrandings();
+  }, [fetchTenants, fetchBrandings]);
 
   const getTenantName = (tenantId) => {
     const t = tenants.find(t => t.id === tenantId);
@@ -60,30 +60,44 @@ export function Branding() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    const payload = {
-      tenantId: formData.tenantId ? parseInt(formData.tenantId) : null,
-      tenantName: getTenantName(formData.tenantId ? parseInt(formData.tenantId) : null),
-      primaryColor: formData.primaryColor,
-      font: formData.font,
-      logoUrl: formData.logoUrl,
-      customCss: formData.customCss,
-      status: formData.status,
-    };
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...payload } : d));
-    } else {
-      setData([{ ...payload, id: Date.now() }, ...data]);
+  const handleSave = async () => {
+    try {
+      const payload = {
+        tenantId: formData.tenantId,
+        tenantName: getTenantName(formData.tenantId),
+        primaryColor: formData.primaryColor,
+        font: formData.font,
+        logoUrl: formData.logoUrl,
+        customCss: formData.customCss,
+        status: formData.status,
+      };
+
+      if (editingId) {
+        await updateBranding(editingId, payload);
+      } else {
+        await createBranding(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error("Failed to save branding", error);
+      const errMsg = error.response?.data?.error?.message || error.message || "Failed to save branding";
+      alert("Error saving branding: " + errMsg);
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this branding?")) {
+      try {
+        await deleteBranding(id);
+      } catch (error) {
+        console.error("Failed to delete branding", error);
+        alert("Failed to delete branding");
+      }
+    }
   };
 
-  const filtered = data.filter(item =>
-    (getTenantName(item.tenantId) || item.tenantName || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = brandings.filter(item =>
+    (item.tenantName || item.tenantId || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

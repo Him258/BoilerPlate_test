@@ -5,31 +5,28 @@ import { Plus, Edit, Trash2, Users } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
 import { StatCard } from '@/components/ui/StatCard';
+import { useTeams } from '@/hooks/useTeams';
+import { useDepartments } from '@/hooks/useDepartments';
 
 const cls = "block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-primary sm:text-sm dark:bg-slate-900 dark:text-white dark:ring-slate-700";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
 export function Teams() {
+  const { teams, fetchTeams, createTeam, updateTeam, deleteTeam } = useTeams();
+  const { departments, fetchDepartments } = useDepartments();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState([
-    { id: 1, name: 'Frontend Squad', departmentId: 'Engineering', lead: 'Charlie Day', members: 8, velocity: '40 pts', status: 'Active' },
-    { id: 2, name: 'Enterprise Sales', departmentId: 'Sales', lead: 'Dennis Reynolds', members: 5, velocity: '$100k/mo', status: 'Active' }
-  ]);
   
-  // We will fetch Departments to show in the dropdown for Teams
-  const [departments, setDepartments] = useState([
-    { id: 1, departmentName: 'Engineering' },
-    { id: 2, departmentName: 'Sales' },
-    { id: 3, departmentName: 'Marketing' }
-  ]);
+  const emptyForm = { teamName: '', departmentId: '', tenantId: '', lead: '', members: '', velocity: '', status: 'Active' };
   
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ name: '', departmentId: '', lead: '', members: '', velocity: '', status: 'Active' });
+  const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed
-
-  // useEffect removed for local data
+  useEffect(() => {
+    fetchTeams();
+    fetchDepartments();
+  }, [fetchTeams, fetchDepartments]);
 
   const handleOpenDrawer = (row = null) => {
     if (row) {
@@ -37,31 +34,40 @@ export function Teams() {
       setFormData(row);
     } else {
       setEditingId(null);
-      setFormData({ name: '', departmentId: '', lead: '', members: '', velocity: '', status: 'Active' });
+      setFormData(emptyForm);
     }
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
-    const payload = {
-      name: formData.name,
-      departmentId: formData.departmentId,
-      lead: formData.lead,
-      members: formData.members,
-      velocity: formData.velocity,
-      status: formData.status
-    };
+  const handleSave = async () => {
+    try {
+      const selectedDept = departments.find(d => d.id === formData.departmentId);
+      const payload = {
+        ...formData,
+        tenantId: selectedDept ? selectedDept.tenantId : formData.tenantId
+      };
 
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...payload } : d));
-    } else {
-      setData([{ ...payload, id: Date.now() }, ...data]);
+      if (editingId) {
+        await updateTeam(editingId, payload);
+      } else {
+        await createTeam(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error("Failed to save team", error);
+      alert("Failed to save team");
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this team?")) {
+      try {
+        await deleteTeam(id);
+      } catch (error) {
+        console.error("Failed to delete team", error);
+        alert("Failed to delete team");
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -69,9 +75,9 @@ export function Teams() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredData = data.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.departmentId || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = teams.filter(item => 
+    (item.teamName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.department?.departmentName || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -109,13 +115,13 @@ export function Teams() {
                 <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-primary" />
-                    {row.name}
+                    {row.teamName}
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  {row.departmentId ? (
+                  {row.department?.departmentName || row.departmentId ? (
                     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                      {row.departmentId}
+                      {row.department?.departmentName || row.departmentId}
                     </span>
                   ) : <span className="text-slate-400">—</span>}
                 </td>
@@ -148,10 +154,10 @@ export function Teams() {
       }
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <StatCard title="Total Teams" value={data.length.toString()} icon="Users" trend={`+${data.filter(t => t.status === 'Active').length} active`} color="orange" />
-        <StatCard title="Avg Members/Team" value={data.length > 0 ? (data.reduce((sum, t) => sum + (parseInt(t.members) || 0), 0) / data.length).toFixed(1) : '0'} icon="ActivitySquare" trend={`across ${data.length} teams`} color="blue" />
-        <StatCard title="Total Members" value={data.reduce((sum, t) => sum + (parseInt(t.members) || 0), 0).toString()} icon="TrendingUp" trend={`in ${data.length} teams`} color="green" />
-        <StatCard title="Active Teams" value={data.filter(t => t.status === 'Active').length.toString()} icon="BarChart3" trend={`${data.filter(t => t.status !== 'Active').length} inactive`} color="purple" />
+        <StatCard title="Total Teams" value={teams.length.toString()} icon="Users" trend={`+${teams.filter(t => t.status === 'Active').length} active`} color="orange" />
+        <StatCard title="Avg Members/Team" value={teams.length > 0 ? (teams.reduce((sum, t) => sum + (parseInt(t.members) || 0), 0) / teams.length).toFixed(1) : '0'} icon="ActivitySquare" trend={`across ${teams.length} teams`} color="blue" />
+        <StatCard title="Total Members" value={teams.reduce((sum, t) => sum + (parseInt(t.members) || 0), 0).toString()} icon="TrendingUp" trend={`in ${teams.length} teams`} color="green" />
+        <StatCard title="Active Teams" value={teams.filter(t => t.status === 'Active').length.toString()} icon="BarChart3" trend={`${teams.filter(t => t.status !== 'Active').length} inactive`} color="purple" />
       </div>
     </UniversalCRUDLayout>
 
@@ -159,7 +165,7 @@ export function Teams() {
       <div className="space-y-4 mt-4">
         <div>
           <label className={labelCls}>Team Name</label>
-          <input name="name" value={formData.name} onChange={handleChange} type="text" className={cls} placeholder="e.g. Frontend Squad, Apollo..." />
+          <input name="teamName" value={formData.teamName} onChange={handleChange} type="text" className={cls} placeholder="e.g. Frontend Squad, Apollo..." />
         </div>
         
         <div>
@@ -167,7 +173,7 @@ export function Teams() {
           <select name="departmentId" value={formData.departmentId} onChange={handleChange} className={cls}>
             <option value="">Select Parent Department...</option>
             {departments.map(d => (
-              <option key={d.id} value={d.departmentName}>{d.departmentName}</option>
+              <option key={d.id} value={d.id}>{d.departmentName}</option>
             ))}
           </select>
           {departments.length === 0 && <p className="text-xs text-amber-500 mt-1">⚠ No departments found. Create a department first.</p>}

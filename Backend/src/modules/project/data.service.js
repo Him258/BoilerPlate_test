@@ -68,7 +68,10 @@ exports.insertRecord = async (project, tableName, payload) => {
   const recordId = payload.id || crypto.randomUUID();
   
   const insertKeys = ['id', ...bodyKeys.filter(k => k !== 'id')];
-  const insertValues = [recordId, ...insertKeys.slice(1).map(k => payload[k])];
+  const insertValues = [recordId, ...insertKeys.slice(1).map(k => {
+    const val = payload[k];
+    return (typeof val === 'object' && val !== null) ? JSON.stringify(val) : val;
+  })];
 
   const escapedKeys = insertKeys.map(k => `\`${k}\``).join(', ');
   const placeholders = insertKeys.map(() => '?').join(', ');
@@ -123,7 +126,10 @@ exports.updateRecord = async (project, tableName, id, payload) => {
   }
 
   const updateClauses = bodyKeys.map(k => `\`${k}\` = ?`).join(', ');
-  const updateValues = [...bodyKeys.map(k => payload[k]), id];
+  const updateValues = [...bodyKeys.map(k => {
+    const val = payload[k];
+    return (typeof val === 'object' && val !== null) ? JSON.stringify(val) : val;
+  }), id];
 
   const sql = `UPDATE \`${tableName}\` SET ${updateClauses} WHERE \`id\` = ?;`;
   console.log(`[DataService.updateRecord] Executing SQL: ${sql} with values:`, updateValues);

@@ -5,85 +5,65 @@ import { Plus, Edit, Trash2, Building } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
 import { StatCard } from '@/components/ui/StatCard';
-import { initialBranches } from './Branches';
+import { useTenants } from '@/hooks/useTenants';
+import { useBranches } from '@/hooks/useBranches';
+import { useOrganizations } from '@/hooks/useOrganizations';
 
 const cls = "block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-primary sm:text-sm dark:bg-slate-900 dark:text-white dark:ring-slate-700";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
 export function Organizations() {
+  const { tenants, fetchTenants } = useTenants();
+  const { branches, fetchBranches } = useBranches();
+  const { organizations, fetchOrganizations, createOrganization, updateOrganization, deleteOrganization } = useOrganizations();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [tenants, setTenants] = useState([
-    { id: 1, organization: 'Acme Corp' },
-    { id: 2, organization: 'Stark Industries' },
-    { id: 3, organization: 'Wayne Enterprises' }
-  ]);
-  // Using dummy data for Organizations to separate it from the Tenants API,
-  // but we still fetch tenants to show in the "Linked Tenant" dropdown.
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Acme North America",
-      tenantId: "Acme Corp", // Simplified for UI demo
-      owner: "John Doe",
-      users: 120,
-      branches: 4,
-      status: "Active"
-    },
-    {
-      id: 2,
-      name: "Stark R&D Labs",
-      tenantId: "Stark Industries",
-      owner: "Tony Stark",
-      users: 45,
-      branches: 2,
-      status: "Active"
-    },
-    {
-      id: 3,
-      name: "Wayne Logistics",
-      tenantId: "Wayne Enterprises",
-      owner: "Bruce Wayne",
-      users: 300,
-      branches: 12,
-      status: "Active"
-    }
-  ]);
 
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ name: '', tenantId: '', owner: '', users: '', branches: '', status: 'Active' });
+  const emptyForm = { name: '', tenantId: '', owner: '', users: '', branches: '', status: 'Active' };
+  const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed
-
+  useEffect(() => {
+    fetchTenants();
+    fetchBranches();
+    fetchOrganizations();
+  }, [fetchTenants, fetchBranches, fetchOrganizations]);
   const handleOpenDrawer = (row = null) => {
     if (row) {
       setEditingId(row.id);
-      setFormData({
-        name: row.name,
-        tenantId: row.tenantId,
-        owner: row.owner,
-        users: row.users,
-        branches: row.branches,
-        status: row.status
-      });
+      setFormData(row);
     } else {
       setEditingId(null);
-      setFormData({ name: '', tenantId: '', owner: '', users: '', branches: '', status: 'Active' });
+      setFormData(emptyForm);
     }
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...formData } : d));
-    } else {
-      setData([{ ...formData, id: Date.now() }, ...data]);
+  const handleSave = async () => {
+    try {
+      if (editingId) {
+        await updateOrganization(editingId, formData);
+      } else {
+        await createOrganization(formData);
+      }
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error("Failed to save organization", error);
+      const errMsg = error.response?.data?.error?.message || error.message || "Failed to save organization";
+      alert("Error saving organization: " + errMsg);
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this organization?")) {
+      try {
+        await deleteOrganization(id);
+      } catch (error) {
+        console.error("Failed to delete organization", error);
+        alert("Failed to delete organization");
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -91,9 +71,9 @@ export function Organizations() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredData = data.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    item.tenantId.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = organizations.filter(item => 
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.tenant?.organization || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -136,10 +116,12 @@ export function Organizations() {
                 </td>
                 <td className="px-6 py-4">
                   <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                    {row.tenantId}
+                    {row.tenant?.organization || row.tenantId}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.owner}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
+                  {row.owner}
+                </td>
                 <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.users}</td>
                 <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.branches}</td>
                 <td className="px-6 py-4">
@@ -168,10 +150,10 @@ export function Organizations() {
       }
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <StatCard title="Total Organizations" value={data.length.toString()} icon="Building2" trend={`+${data.filter(o => o.status === 'Active').length} active`} color="blue" />
-        <StatCard title="Total Branches" value={data.reduce((sum, o) => sum + (parseInt(o.branches) || 0), 0).toString()} icon="MapPin" trend={`across ${data.length} orgs`} color="green" />
-        <StatCard title="Total Users" value={data.reduce((sum, o) => sum + (parseInt(o.users) || 0), 0).toLocaleString()} icon="Briefcase" trend={`in ${data.length} orgs`} color="purple" />
-        <StatCard title="Active Organizations" value={data.filter(o => o.status === 'Active').length.toString()} icon="Users" trend={`${data.filter(o => o.status !== 'Active').length} inactive`} color="orange" />
+        <StatCard title="Total Organizations" value={organizations.length.toString()} icon="Building" trend={`+${organizations.filter(t => t.status === 'Active').length} active`} color="orange" />
+        <StatCard title="Total Users" value={organizations.reduce((sum, t) => sum + (parseInt(t.users) || 0), 0).toString()} icon="ActivitySquare" trend={`across ${organizations.length} orgs`} color="blue" />
+        <StatCard title="Total Branches" value={organizations.reduce((sum, t) => sum + (parseInt(t.branches) || 0), 0).toString()} icon="TrendingUp" trend={`in ${organizations.length} orgs`} color="green" />
+        <StatCard title="Active Orgs" value={organizations.filter(t => t.status === 'Active').length.toString()} icon="BarChart3" trend={`${organizations.filter(t => t.status !== 'Active').length} inactive`} color="purple" />
       </div>
     </UniversalCRUDLayout>
 
@@ -187,7 +169,7 @@ export function Organizations() {
           <select name="tenantId" value={formData.tenantId} onChange={handleChange} className={cls}>
             <option value="">Select Parent Tenant...</option>
             {tenants.map(t => (
-              <option key={t.id} value={t.organization}>{t.organization}</option>
+              <option key={t.id} value={t.id}>{t.organization}</option>
             ))}
           </select>
           {tenants.length === 0 && <p className="text-xs text-amber-500 mt-1">Fetching tenants...</p>}
@@ -207,8 +189,8 @@ export function Organizations() {
             <label className={labelCls}>Branch</label>
             <select name="branches" value={formData.branches} onChange={handleChange} className={cls}>
               <option value="">Select Branch...</option>
-              {initialBranches.map(b => (
-                <option key={b.id} value={b.c1}>{b.c1}</option>
+              {branches.map(b => (
+                <option key={b.id} value={b.branchName}>{b.branchName}</option>
               ))}
             </select>
           </div>

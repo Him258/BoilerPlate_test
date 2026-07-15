@@ -5,22 +5,27 @@ exports.getAnalytics = async (tenantId, role) => {
 
   // Metrics
   const totalUsers = await prisma.user.count({ where: whereClause });
-  const activeUsers = await prisma.user.count({ where: { ...whereClause, status: 'ACTIVE' } });
+  const activeUsers = await prisma.user.count({ where: { ...whereClause, status: 'Active' } });
   
   // Total Companies (Tenants) - typically super admin only, but we'll return it anyway
-  const totalCompanies = await prisma.tenant.count({ where: { status: 'ACTIVE' } });
+  const totalCompanies = await prisma.tenant.count({ where: { status: 'Active' } });
   
   const branches = await prisma.branch.count({ where: whereClause });
   
   // Active Plans
-  const activePlans = await prisma.subscription.count({ where: { ...whereClause, status: 'ACTIVE' } });
+  const activePlans = await prisma.plan.count({ where: { status: 'Active' } });
 
   // Storage Usage (bytes to formatted string later in frontend, or return bytes)
-  const fileAggregate = await prisma.file.aggregate({
+  const files = await prisma.file.findMany({
     where: whereClause,
-    _sum: { size: true }
+    select: { size: true }
   });
-  const storageUsageBytes = fileAggregate._sum.size || 0;
+  let storageUsageBytes = 0;
+  files.forEach(f => {
+    if (f.size) {
+      storageUsageBytes += parseInt(f.size.replace(/[^0-9]/g, '')) || 0;
+    }
+  });
 
   // API Requests (Audit Logs)
   const apiRequests = await prisma.auditLog.count({ where: whereClause });
@@ -29,8 +34,10 @@ exports.getAnalytics = async (tenantId, role) => {
   const aiProviders = await prisma.aIProvider.findMany({ where: whereClause, select: { tokens: true } });
   let aiUsageTokens = 0;
   aiProviders.forEach(p => {
-    const val = parseFloat(p.tokens.replace(/[^0-9.-]+/g,""));
-    if (!isNaN(val)) aiUsageTokens += val;
+    if (p.tokens) {
+      const val = parseFloat(p.tokens.replace(/[^0-9.-]+/g,""));
+      if (!isNaN(val)) aiUsageTokens += val;
+    }
   });
 
   // Total Revenue (sum from Invoices)
@@ -41,8 +48,10 @@ exports.getAnalytics = async (tenantId, role) => {
 
   let totalRevenue = 0;
   invoices.forEach(inv => {
-    const val = parseFloat(inv.amount.replace(/[^0-9.-]+/g,""));
-    if (!isNaN(val)) totalRevenue += val;
+    if (inv.amount) {
+      const val = parseFloat(inv.amount.replace(/[^0-9.-]+/g,""));
+      if (!isNaN(val)) totalRevenue += val;
+    }
   });
 
   // Generate chart data for the last 6 months (Jan-Jun etc.)

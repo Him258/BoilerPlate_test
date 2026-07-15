@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
-// API client removed for UI-only mode
+import { useTenants } from '@/hooks/useTenants';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
 import { StatCard } from '@/components/ui/StatCard';
 import { MockChart } from '@/components/ui/MockChart';
-
-export const initialTenants = [
-  { id: 1, c1: 'TNT-001', c2: 'Acme Corp', c3: 'Enterprise', c4: '1,200', c5: '50 GB', c6: 'Active' },
-  { id: 2, c1: 'TNT-002', c2: 'Stark Industries', c3: 'Pro', c4: '45', c5: '10 GB', c6: 'Active' },
-  { id: 3, c1: 'TNT-003', c2: 'Wayne Enterprises', c3: 'Enterprise', c4: '3,400', c5: '120 GB', c6: 'Active' },
-  { id: 4, c1: 'TNT-004', c2: 'Globex', c3: 'Basic', c4: '12', c5: '2 GB', c6: 'Suspended' }
-];
+import { SkeletonTable } from '@/components/ui/LoadingSkeleton';
 
 export function Companies() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const [data, setData] = useState(initialTenants);
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ c1: '', c2: '', c3: '', c4: '', c5: '', c6: '' });
+  const [formData, setFormData] = useState({ organization: '', plan: '', totalUsers: '', databaseSize: '', status: '' });
 
-  // fetchTenants removed as we are using dummy data
+  const { tenants: data, loading, fetchTenants, createTenant, updateTenant, deleteTenant } = useTenants();
+
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants]);
 
   const handleOpenDrawer = (row = null) => {
     if (row) {
@@ -30,34 +27,32 @@ export function Companies() {
       setFormData(row);
     } else {
       setEditingId(null);
-      setFormData({ c1: `TNT-00${data.length + 1}`, c2: '', c3: 'Free', c4: '0', c5: '0 GB', c6: 'Active' });
+      setFormData({ organization: '', plan: 'Free', totalUsers: '0', databaseSize: '0 GB', status: 'Active' });
     }
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
-    let newData;
-    if (editingId) {
-      newData = data.map(d => d.id === editingId ? { ...d, ...formData } : d);
-    } else {
-      newData = [{ ...formData, id: Date.now() }, ...data];
+  const handleSave = async () => {
+    try {
+      if (editingId) {
+        await updateTenant(editingId, formData);
+      } else {
+        await createTenant(formData);
+      }
+      setIsDrawerOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to save tenant');
     }
-    setData(newData);
-    
-    // Persist to global mock state
-    initialTenants.length = 0;
-    initialTenants.push(...newData);
-    
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    const newData = data.filter(d => d.id !== id);
-    setData(newData);
-    
-    // Persist to global mock state
-    initialTenants.length = 0;
-    initialTenants.push(...newData);
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this tenant?')) {
+      try {
+        await deleteTenant(id);
+      } catch (err) {
+        alert(err.message || 'Failed to delete tenant');
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -70,6 +65,14 @@ export function Companies() {
       String(val).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  if (loading && data.length === 0) {
+    return (
+      <div className="p-6">
+        <SkeletonTable rows={4} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -103,21 +106,20 @@ export function Companies() {
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-transparent">
             {filteredData.map((row) => (
               <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{row.c1}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c2}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c3}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c4}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c5}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c6}</td>
+                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{row.id?.substring ? row.id.substring(0, 8) : row.id}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.organization}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.plan}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.totalUsers}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.databaseSize}</td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    row.c7 === 'Active' || row.c7 === 'Success' || row.c7 === 'Trusted' || row.c7 === 'Verified' || row.c7 === 'Paid' || row.c7 === 'System' || row.c7 === 'Published' || row.c7 === 'Enabled'
+                    row.status === 'Active' || row.status === 'Success' || row.status === 'Trusted' || row.status === 'Verified' || row.status === 'Paid' || row.status === 'System' || row.status === 'Published' || row.status === 'Enabled'
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                      : row.c7 === 'Expired' || row.c7 === 'Failed' || row.c7 === 'Blocked' || row.c7 === 'Suspended' || row.c7 === 'Archived' || row.c7 === 'Disabled'
+                      : row.status === 'Expired' || row.status === 'Failed' || row.status === 'Blocked' || row.status === 'Suspended' || row.status === 'Archived' || row.status === 'Disabled'
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                       : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}>
-                    {row.c7 || row.c6 || row.c5 || 'Active'}
+                    {row.status || 'Active'}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
@@ -137,10 +139,10 @@ export function Companies() {
       }
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <StatCard title="Total Tenants" value={data.length.toString()} icon="Database" trend={`+${data.filter(t => t.c6 === 'Active').length}`} color="blue" />
-        <StatCard title="Active Plans" value={data.filter(t => t.c6 === 'Active').length.toString()} icon="CreditCard" trend={`${data.filter(t => t.c6 === 'Suspended').length} suspended`} color="green" />
-        <StatCard title="Enterprise Tenants" value={data.filter(t => t.c3 === 'Enterprise').length.toString()} icon="Globe" trend={`${data.filter(t => t.c3 === 'Pro').length} Pro`} color="purple" />
-        <StatCard title="Total Users" value={data.reduce((sum, t) => sum + (parseInt(t.c4) || 0), 0).toLocaleString()} icon="HardDrive" trend={`across ${data.length} tenants`} color="orange" />
+        <StatCard title="Total Tenants" value={data.length.toString()} icon="Database" trend={`+${data.filter(t => t.status === 'Active').length}`} color="blue" />
+        <StatCard title="Active Plans" value={data.filter(t => t.status === 'Active').length.toString()} icon="CreditCard" trend={`${data.filter(t => t.status === 'Suspended').length} suspended`} color="green" />
+        <StatCard title="Enterprise Tenants" value={data.filter(t => t.plan === 'Enterprise').length.toString()} icon="Globe" trend={`${data.filter(t => t.plan === 'Pro').length} Pro`} color="purple" />
+        <StatCard title="Total Users" value={data.reduce((sum, t) => sum + (parseInt(t.totalUsers) || 0), 0).toLocaleString()} icon="HardDrive" trend={`across ${data.length} tenants`} color="orange" />
       </div>
     </UniversalCRUDLayout>
       <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title={editingId ? "Edit Record" : "Add Record"}>
@@ -148,11 +150,11 @@ export function Companies() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tenant Name</label>
-            <input name="c2" value={formData.c2} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Tenant Name..." />
+            <input name="organization" value={formData.organization || ''} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Tenant Name..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Plan</label>
-            <select name="c3" value={formData.c3} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
+            <select name="plan" value={formData.plan || ''} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
               <option value="">Select Plan...</option>
               <option value="Free">Free</option>
               <option value="Basic">Basic</option>
@@ -162,15 +164,15 @@ export function Companies() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Users</label>
-            <input name="c4" value={formData.c4} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Users..." />
+            <input name="totalUsers" value={formData.totalUsers || ''} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Users..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Database Size</label>
-            <input name="c5" value={formData.c5} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Database Size..." />
+            <input name="databaseSize" value={formData.databaseSize || ''} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Database Size..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-            <select name="c6" value={formData.c6} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
+            <select name="status" value={formData.status || ''} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
               <option value="Suspended">Suspended</option>

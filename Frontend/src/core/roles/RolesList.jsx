@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-// API client removed for UI-only mode
+import { useRoles } from '@/hooks/useRoles';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2, Shield } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
+import { SkeletonTable } from '@/components/ui/LoadingSkeleton';
 
 const inputCls = "block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
@@ -19,15 +20,14 @@ const emptyForm = { roleName: '', description: '', type: 'Custom', status: 'Acti
 export function RolesList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState([
-    { id: 1, roleName: 'Super Admin', type: 'System', permissionsGranted: 42, totalUsers: 3, status: 'Active' },
-    { id: 2, roleName: 'Sales Agent', type: 'Custom', permissionsGranted: 15, totalUsers: 120, status: 'Active' },
-    { id: 3, roleName: 'Support Staff', type: 'Custom', permissionsGranted: 8, totalUsers: 45, status: 'Active' },
-  ]);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed as we use local data
+  const { roles, loading, fetchRoles, createRole, updateRole, deleteRole } = useRoles();
+
+  useEffect(() => {
+    fetchRoles();
+  }, [fetchRoles]);
 
   const handleOpenDrawer = (row = null) => {
     if (row) {
@@ -51,30 +51,46 @@ export function RolesList() {
   };
 
 
-  const handleSave = () => {
-    const payload = {
-      roleName: formData.roleName,
-      description: formData.description,
-      type: formData.type,
-      status: formData.status,
-      permissionsGranted: formData.permissionsGranted || 0,
-      totalUsers: formData.totalUsers || 0
-    };
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...payload } : d));
-    } else {
-      setData([{ ...payload, id: Date.now() }, ...data]);
+  const handleSave = async () => {
+    try {
+      const payload = {
+        roleName: formData.roleName,
+        description: formData.description,
+        type: formData.type,
+        status: formData.status,
+      };
+      if (editingId) {
+        await updateRole(editingId, payload);
+      } else {
+        await createRole(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to save role');
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this role?')) {
+      try {
+        await deleteRole(id);
+      } catch (err) {
+        alert(err.message || 'Failed to delete role');
+      }
+    }
   };
 
-  const filtered = data.filter(item =>
+  const filtered = roles.filter(item =>
     (item.roleName || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading && roles.length === 0) {
+    return (
+      <div className="p-6">
+        <SkeletonTable rows={4} />
+      </div>
+    );
+  }
 
   return (
     <>

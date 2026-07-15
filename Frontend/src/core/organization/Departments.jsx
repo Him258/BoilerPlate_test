@@ -5,27 +5,27 @@ import { Plus, Edit, Trash2, Briefcase } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
 import { StatCard } from '@/components/ui/StatCard';
-import { initialBranches as branches } from './Branches';
+import { useDepartments } from '@/hooks/useDepartments';
+import { useTenants } from '@/hooks/useTenants';
 
 const cls = "block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-primary sm:text-sm dark:bg-slate-900 dark:text-white dark:ring-slate-700";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
 
 export function Departments() {
+  const { departments, fetchDepartments, createDepartment, updateDepartment, deleteDepartment } = useDepartments();
+  const { tenants, fetchTenants } = useTenants();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState([
-    { id: 1, name: 'Engineering', branchId: 'HQ', head: 'Alice Smith', employees: 50, budget: '$5M', status: 'Active' },
-    { id: 2, name: 'Sales', branchId: 'West Coast', head: 'Bob Jones', employees: 20, budget: '$1M', status: 'Active' }
-  ]);
-  
-  // We will fetch Branches to show in the dropdown for Departments
-  
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ name: '', branchId: '', head: '', employees: '', budget: '', status: 'Active' });
+  
+  const emptyForm = { departmentName: '', tenantId: '', organization: '', headOfDepartment: '', employees: '', budget: '', status: 'Active' };
+  const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed
-
-  // useEffect removed for local data
+  useEffect(() => {
+    fetchDepartments();
+    fetchTenants();
+  }, [fetchDepartments, fetchTenants]);
 
   const handleOpenDrawer = (row = null) => {
     if (row) {
@@ -33,31 +33,40 @@ export function Departments() {
       setFormData(row);
     } else {
       setEditingId(null);
-      setFormData({ name: '', branchId: '', head: '', employees: '', budget: '', status: 'Active' });
+      setFormData(emptyForm);
     }
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
-    const payload = {
-      name: formData.name,
-      branchId: formData.branchId,
-      head: formData.head,
-      employees: formData.employees,
-      budget: formData.budget,
-      status: formData.status
-    };
+  const handleSave = async () => {
+    try {
+      const selectedTenant = tenants.find(t => t.id === formData.tenantId);
+      const payload = {
+        ...formData,
+        organization: selectedTenant ? selectedTenant.organization : formData.organization
+      };
 
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...payload } : d));
-    } else {
-      setData([{ ...payload, id: Date.now() }, ...data]);
+      if (editingId) {
+        await updateDepartment(editingId, payload);
+      } else {
+        await createDepartment(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error("Failed to save department", error);
+      alert("Failed to save department");
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this department?")) {
+      try {
+        await deleteDepartment(id);
+      } catch (error) {
+        console.error("Failed to delete department", error);
+        alert("Failed to delete department");
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -65,9 +74,9 @@ export function Departments() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredData = data.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.branchId || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = departments.filter(item => 
+    (item.departmentName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.organization || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -91,7 +100,7 @@ export function Departments() {
           <thead className="bg-slate-50 dark:bg-slate-900/50 dark:text-white text-slate-900">
             <tr>
               <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Department Name</th>
-              <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Linked Branch</th>
+              <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Linked Tenant</th>
               <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Head of Department</th>
               <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Employees</th>
               <th className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-200">Budget</th>
@@ -105,17 +114,17 @@ export function Departments() {
                 <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
                   <div className="flex items-center gap-2">
                     <Briefcase className="h-4 w-4 text-primary" />
-                    {row.name}
+                    {row.departmentName}
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  {row.branchId ? (
+                  {row.tenant?.organization || row.organization ? (
                     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                      {row.branchId}
+                      {row.tenant?.organization || row.organization}
                     </span>
                   ) : <span className="text-slate-400">—</span>}
                 </td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.head}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.headOfDepartment}</td>
                 <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.employees}</td>
                 <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.budget}</td>
                 <td className="px-6 py-4">
@@ -144,10 +153,10 @@ export function Departments() {
       }
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <StatCard title="Total Departments" value={data.length.toString()} icon="Briefcase" trend={`+${data.filter(d => d.status === 'Active').length} active`} color="purple" />
-        <StatCard title="Active Employees" value={data.reduce((sum, d) => sum + (parseInt(d.employees) || 0), 0).toLocaleString()} icon="Users" trend={`in ${data.length} depts`} color="green" />
-        <StatCard title="Total Budget" value={data.length > 0 ? data.map(d => d.budget || '$0').join(', ') : '$0'} icon="DollarSign" trend={`across ${data.length} depts`} color="blue" />
-        <StatCard title="Avg Employees/Dept" value={data.length > 0 ? (data.reduce((sum, d) => sum + (parseInt(d.employees) || 0), 0) / data.length).toFixed(1) : '0'} icon="BarChart3" trend={`${data.filter(d => d.status !== 'Active').length} inactive`} color="orange" />
+        <StatCard title="Total Departments" value={departments.length.toString()} icon="Briefcase" trend={`+${departments.filter(d => d.status === 'Active').length} active`} color="purple" />
+        <StatCard title="Active Employees" value={departments.reduce((sum, d) => sum + (parseInt(d.employees) || 0), 0).toLocaleString()} icon="Users" trend={`in ${departments.length} depts`} color="green" />
+        <StatCard title="Total Budget" value={departments.length > 0 ? departments.map(d => d.budget || '$0').join(', ') : '$0'} icon="DollarSign" trend={`across ${departments.length} depts`} color="blue" />
+        <StatCard title="Avg Employees/Dept" value={departments.length > 0 ? (departments.reduce((sum, d) => sum + (parseInt(d.employees) || 0), 0) / departments.length).toFixed(1) : '0'} icon="BarChart3" trend={`${departments.filter(d => d.status !== 'Active').length} inactive`} color="orange" />
       </div>
     </UniversalCRUDLayout>
 
@@ -155,23 +164,23 @@ export function Departments() {
       <div className="space-y-4 mt-4">
         <div>
           <label className={labelCls}>Department Name</label>
-          <input name="name" value={formData.name} onChange={handleChange} type="text" className={cls} placeholder="e.g. Engineering, Sales..." />
+          <input name="departmentName" value={formData.departmentName} onChange={handleChange} type="text" className={cls} placeholder="e.g. Engineering, Sales..." />
         </div>
         
         <div>
-          <label className={labelCls}>Linked Branch <span className="text-xs text-slate-400 font-normal ml-2">(Parent Branch)</span></label>
-          <select name="branchId" value={formData.branchId} onChange={handleChange} className={cls}>
-            <option value="">Select Parent Branch...</option>
-            {branches.map(b => (
-              <option key={b.id} value={b.c1}>{b.c1}</option>
+          <label className={labelCls}>Linked Tenant <span className="text-xs text-slate-400 font-normal ml-2">(Parent Company)</span></label>
+          <select name="tenantId" value={formData.tenantId} onChange={handleChange} className={cls}>
+            <option value="">Select Tenant...</option>
+            {tenants.map(t => (
+              <option key={t.id} value={t.id}>{t.organization}</option>
             ))}
           </select>
-          {branches.length === 0 && <p className="text-xs text-amber-500 mt-1">⚠ No branches found. Create a branch first.</p>}
+          {tenants.length === 0 && <p className="text-xs text-amber-500 mt-1">⚠ No tenants found. Create a tenant first.</p>}
         </div>
 
         <div>
           <label className={labelCls}>Head of Department</label>
-          <input name="head" value={formData.head} onChange={handleChange} type="text" className={cls} placeholder="Enter HOD Name..." />
+          <input name="headOfDepartment" value={formData.headOfDepartment} onChange={handleChange} type="text" className={cls} placeholder="Enter HOD Name..." />
         </div>
 
         <div className="grid grid-cols-2 gap-4">

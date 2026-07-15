@@ -1,46 +1,27 @@
 import React, { useState, useEffect } from 'react';
-// API client removed
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
-
-export const initialBranches = [
-  { id: 1, c1: 'HQ', c2: 'Acme Corp', c3: 'Jane Doe', c4: '150', c5: 'New York', c6: 'Active' },
-  { id: 2, c1: 'West Coast', c2: 'Acme Corp', c3: 'John Smith', c4: '45', c5: 'San Francisco', c6: 'Active' },
-  { id: 3, c1: 'Main Branch', c2: 'Stark Industries', c3: 'Tony Stark', c4: '2000', c5: 'Los Angeles', c6: 'Active' }
-];
+import { useBranches } from '@/hooks/useBranches';
+import { useTenants } from '@/hooks/useTenants';
 
 export function Branches() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const [data, setData] = useState(initialBranches);
-  const [organizations, setOrganizations] = useState([]);
+  const { branches, fetchBranches, createBranch, updateBranch, deleteBranch } = useBranches();
+  const { tenants, fetchTenants } = useTenants();
+
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ c1: '', c2: '', c3: '', c4: '', c5: '', c6: '' });
-
-  const [tenants, setTenants] = useState([
-    { id: 1, organization: 'Acme Corp' },
-    { id: 2, organization: 'Stark Industries' }
-  ]);
-
-  const fetchOrganizations = async () => {
-    try {
-      setOrganizations(tenants);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchBranches = async () => {
-    // Local data is already set in state
-  };
+  
+  const emptyForm = { branchName: '', tenantId: '', organization: '', manager: '', employees: '', city: '', status: 'Active' };
+  const [formData, setFormData] = useState(emptyForm);
 
   useEffect(() => {
     fetchBranches();
-    fetchOrganizations();
-  }, []);
+    fetchTenants();
+  }, [fetchBranches, fetchTenants]);
 
 
   const handleOpenDrawer = (row = null) => {
@@ -49,34 +30,40 @@ export function Branches() {
       setFormData(row);
     } else {
       setEditingId(null);
-      setFormData({ c1: '', c2: '', c3: '', c4: '', c5: '', c6: '' });
+      setFormData(emptyForm);
     }
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
-    let newData;
-    if (editingId) {
-      newData = data.map(d => d.id === editingId ? { ...d, ...formData } : d);
-    } else {
-      newData = [{ ...formData, id: Date.now() }, ...data];
+  const handleSave = async () => {
+    try {
+      const selectedTenant = tenants.find(t => t.id === formData.tenantId);
+      const payload = {
+        ...formData,
+        organization: selectedTenant ? selectedTenant.organization : formData.organization
+      };
+
+      if (editingId) {
+        await updateBranch(editingId, payload);
+      } else {
+        await createBranch(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error("Failed to save branch", error);
+      alert("Failed to save branch");
     }
-    setData(newData);
-    
-    // Mutate the exported array to persist data across page navigations (Mock Frontend DB)
-    initialBranches.length = 0;
-    initialBranches.push(...newData);
-    
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    const newData = data.filter(d => d.id !== id);
-    setData(newData);
-    
-    // Mutate the exported array to persist data
-    initialBranches.length = 0;
-    initialBranches.push(...newData);
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this branch?")) {
+      try {
+        await deleteBranch(id);
+      } catch (error) {
+        console.error("Failed to delete branch", error);
+        alert("Failed to delete branch");
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -84,7 +71,7 @@ export function Branches() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredData = data.filter(item => 
+  const filteredData = branches.filter(item => 
     Object.values(item).some(val => 
       String(val).toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -122,20 +109,20 @@ export function Branches() {
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-transparent">
             {filteredData.map((row) => (
               <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{row.c1}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c2}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c3}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c4}</td>
-                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.c5}</td>
+                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{row.branchName}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.tenant?.organization || row.organization}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.manager}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.employees}</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.city}</td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    row.c6 === 'Active' || row.c6 === 'Success' || row.c6 === 'Trusted' || row.c6 === 'Indexed' || row.c6 === 'Published'
+                    row.status === 'Active' || row.status === 'Success' || row.status === 'Trusted' || row.status === 'Indexed' || row.status === 'Published'
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                      : row.c6 === 'Expired' || row.c6 === 'Failed' || row.c6 === 'Blocked' || row.c6 === 'Suspended' 
+                      : row.status === 'Expired' || row.status === 'Failed' || row.status === 'Blocked' || row.status === 'Suspended' 
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                       : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}>
-                    {row.c6}
+                    {row.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
@@ -160,32 +147,32 @@ export function Branches() {
         <div className="space-y-4 mt-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Branch Name</label>
-            <input name="c1" value={formData.c1} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Branch Name..." />
+            <input name="branchName" value={formData.branchName} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Branch Name..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Linked Tenant <span className="text-xs text-slate-400 font-normal ml-2">(Which company does this branch belong to?)</span></label>
-            <select name="c2" value={formData.c2} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
+            <select name="tenantId" value={formData.tenantId} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
               <option value="">Select Tenant</option>
-              {organizations.map(org => (
-                <option key={org.id} value={org.organization}>{org.organization}</option>
+              {tenants.map(org => (
+                <option key={org.id} value={org.id}>{org.organization}</option>
               ))}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Manager</label>
-            <input name="c3" value={formData.c3} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Manager..." />
+            <input name="manager" value={formData.manager} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Manager..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Employees</label>
-            <input name="c4" value={formData.c4} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Employees..." />
+            <input name="employees" value={formData.employees} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter Employees..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">City</label>
-            <input name="c5" value={formData.c5} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter City..." />
+            <input name="city" value={formData.city} onChange={handleChange} type="text" className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700" placeholder="Enter City..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-            <select name="c6" value={formData.c6} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
+            <select name="status" value={formData.status} onChange={handleChange} className="block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
               <option value="Suspended">Suspended</option>

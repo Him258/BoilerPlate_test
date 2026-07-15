@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-// API client removed for UI-only mode
+import { useUsers } from '@/hooks/useUsers';
+import { useRoles } from '@/hooks/useRoles';
+import { useTenants } from '@/hooks/useTenants';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2, User } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
+import { SkeletonTable } from '@/components/ui/LoadingSkeleton';
 
 const inputCls = "block w-full rounded-md border-0 py-1.5 px-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-slate-900 dark:text-white dark:ring-slate-700";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
@@ -14,29 +17,23 @@ const statusColor = (s) => {
   return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
 };
 
-const emptyForm = { name: '', email: '', role: '', organization: '', status: 'Active' };
-
-export const initialUsers = [
-  { id: 1, name: 'Alice Smith', email: 'alice@acmecorp.com', role: 'Super Admin', organization: 'Acme Corp', status: 'Active', lastLogin: '2 hours ago' },
-  { id: 2, name: 'Bob Jones', email: 'bob@stark.com', role: 'Sales Agent', organization: 'Stark Industries', status: 'Active', lastLogin: '1 day ago' }
-];
+const emptyForm = { name: '', email: '', roleId: '', tenantId: '', status: 'Active' };
 
 export function UsersList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState(initialUsers);
-  const [roles, setRoles] = useState([
-    { id: 1, roleName: 'Super Admin' },
-    { id: 2, roleName: 'Sales Agent' }
-  ]);
-  const [organizations, setOrganizations] = useState([
-    { id: 1, organization: 'Acme Corp' },
-    { id: 2, organization: 'Stark Industries' }
-  ]);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed as we use local data
+  const { users, loading, fetchUsers, createUser, updateUser, deleteUser } = useUsers();
+  const { roles, fetchRoles } = useRoles();
+  const { tenants, fetchTenants } = useTenants();
+
+  useEffect(() => {
+    fetchUsers();
+    fetchRoles();
+    fetchTenants();
+  }, [fetchUsers, fetchRoles, fetchTenants]);
 
   const handleOpenDrawer = (row = null) => {
     if (row) {
@@ -44,8 +41,8 @@ export function UsersList() {
       setFormData({
         name: row.name || '',
         email: row.email || '',
-        role: row.role || '',
-        organization: row.organization || '',
+        roleId: row.roleId || row.role?.id || '',
+        tenantId: row.tenantId || row.tenant?.id || '',
         status: row.status || 'Active',
       });
     } else {
@@ -60,35 +57,50 @@ export function UsersList() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    let newData;
-    if (editingId) {
-      newData = data.map(d => d.id === editingId ? { ...d, ...formData } : d);
-    } else {
-      newData = [{ ...formData, id: Date.now(), lastLogin: 'Just now' }, ...data];
+  const handleSave = async () => {
+    try {
+      // Create a payload. Role and Tenant might need to be integers.
+      const payload = {
+        ...formData,
+        roleId: formData.roleId || null,
+        tenantId: formData.tenantId || null,
+      };
+
+      if (editingId) {
+        await updateUser(editingId, payload);
+      } else {
+        await createUser(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to save user');
     }
-    setData(newData);
-    
-    // Persist to global mock state
-    initialUsers.length = 0;
-    initialUsers.push(...newData);
-    
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    const newData = data.filter(d => d.id !== id);
-    setData(newData);
-    
-    // Persist to global mock state
-    initialUsers.length = 0;
-    initialUsers.push(...newData);
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await deleteUser(id);
+      } catch (err) {
+        alert(err.message || 'Failed to delete user');
+      }
+    }
   };
 
-  const filtered = data.filter(item =>
-    [(item.name || ''), (item.email || ''), (item.role || ''), (item.organization || '')]
-      .some(v => v.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filtered = users.filter(item => {
+    const roleName = item.role?.roleName || roles.find(r => r.id === item.roleId)?.roleName || '';
+    const tenantName = item.tenant?.organization || tenants.find(t => t.id === item.tenantId)?.organization || '';
+    return [(item.name || ''), (item.email || ''), roleName, tenantName]
+      .some(v => v.toLowerCase().includes(searchTerm.toLowerCase()));
+  });
+
+  if (loading && users.length === 0) {
+    return (
+      <div className="p-6">
+        <SkeletonTable rows={4} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -132,13 +144,18 @@ export function UsersList() {
                   </td>
                   <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.email}</td>
                   <td className="px-6 py-4">
-                    {row.role ? (
-                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
-                        {row.role}
-                      </span>
-                    ) : <span className="text-slate-400 text-xs">No role</span>}
+                    {(() => {
+                      const roleName = row.role?.roleName || roles.find(r => r.id === row.roleId)?.roleName;
+                      return roleName ? (
+                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                          {roleName}
+                        </span>
+                      ) : <span className="text-slate-400 text-xs">No role</span>;
+                    })()}
                   </td>
-                  <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{row.organization || '—'}</td>
+                  <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
+                    {row.tenant?.organization || tenants.find(t => t.id === row.tenantId)?.organization || '—'}
+                  </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor(row.status)}`}>
                       {row.status || 'Active'}
@@ -181,10 +198,10 @@ export function UsersList() {
           <div>
             <label className={labelCls}>Assign Role</label>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Role determines what this user can see and do</p>
-            <select name="role" value={formData.role} onChange={handleChange} className={inputCls}>
+            <select name="roleId" value={formData.roleId} onChange={handleChange} className={inputCls}>
               <option value="">Select Role...</option>
               {roles.map(r => (
-                <option key={r.id} value={r.roleName}>{r.roleName}</option>
+                <option key={r.id} value={r.id}>{r.roleName}</option>
               ))}
             </select>
             {roles.length === 0 && (
@@ -195,10 +212,10 @@ export function UsersList() {
           {/* Organization — from Tenants list */}
           <div>
             <label className={labelCls}>Organization</label>
-            <select name="organization" value={formData.organization} onChange={handleChange} className={inputCls}>
+            <select name="tenantId" value={formData.tenantId} onChange={handleChange} className={inputCls}>
               <option value="">Select Organization...</option>
-              {organizations.map(org => (
-                <option key={org.id} value={org.organization}>{org.organization}</option>
+              {tenants.map(org => (
+                <option key={org.id} value={org.id}>{org.organization}</option>
               ))}
             </select>
           </div>

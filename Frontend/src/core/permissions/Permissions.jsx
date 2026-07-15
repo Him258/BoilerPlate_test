@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-// API client removed for UI-only mode
+import { usePermissions } from '@/hooks/usePermissions';
+import { useRoles } from '@/hooks/useRoles';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2, Check, X, Shield } from 'lucide-react';
 import { UniversalCRUDLayout } from '@/components/layout/UniversalCRUDLayout';
 import { Drawer } from '@/components/ui/Drawer';
+import { SkeletonTable } from '@/components/ui/LoadingSkeleton';
 
 const MODULES = [
   'Dashboard', 'Users', 'Roles', 'Permissions', 'Organizations',
@@ -30,7 +32,7 @@ const emptyForm = {
   canDelete: false, canImport: false, canExport: false, canApprove: false
 };
 
-const toBool = (val) => val === true || val === 'true' || val === '✔️' || val === 'yes';
+const toBool = (val) => val === true || val === 'true' || val === '✔️' || val === 'yes' || val === 1;
 
 function PermBadge({ val }) {
   return toBool(val)
@@ -44,18 +46,16 @@ const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 m
 export function Permissions() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [data, setData] = useState([
-    { id: 1, roleId: 1, module: 'Users', canView: true, canCreate: true, canUpdate: true, canDelete: true, canImport: false, canExport: false, canApprove: false },
-    { id: 2, roleId: 2, module: 'Dashboard', canView: true, canCreate: false, canUpdate: false, canDelete: false, canImport: false, canExport: false, canApprove: false }
-  ]);
-  const [roles, setRoles] = useState([
-    { id: 1, roleName: 'Super Admin' },
-    { id: 2, roleName: 'Sales Agent' }
-  ]);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
 
-  // fetch logic removed as we use local data
+  const { permissions, loading, fetchPermissions, createPermission, updatePermission, deletePermission } = usePermissions();
+  const { roles, fetchRoles } = useRoles();
+
+  useEffect(() => {
+    fetchPermissions();
+    fetchRoles();
+  }, [fetchPermissions, fetchRoles]);
 
   // Helper: get role name by id
   const getRoleName = (roleId) => {
@@ -88,34 +88,53 @@ export function Permissions() {
     setFormData(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleSave = () => {
-    const payload = {
-      roleId: formData.roleId ? parseInt(formData.roleId) : null,
-      module: formData.module,
-      canView: formData.canView,
-      canCreate: formData.canCreate,
-      canUpdate: formData.canUpdate,
-      canDelete: formData.canDelete,
-      canImport: formData.canImport,
-      canExport: formData.canExport,
-      canApprove: formData.canApprove,
-    };
-    if (editingId) {
-      setData(data.map(d => d.id === editingId ? { ...d, ...payload } : d));
-    } else {
-      setData([{ ...payload, id: Date.now() }, ...data]);
+  const handleSave = async () => {
+    try {
+      const payload = {
+        roleId: formData.roleId || null,
+        module: formData.module,
+        canView: formData.canView ? '✔️' : '❌',
+        canCreate: formData.canCreate ? '✔️' : '❌',
+        canUpdate: formData.canUpdate ? '✔️' : '❌',
+        canDelete: formData.canDelete ? '✔️' : '❌',
+        canImport: formData.canImport ? '✔️' : '❌',
+        canExport: formData.canExport ? '✔️' : '❌',
+        canApprove: formData.canApprove ? '✔️' : '❌',
+      };
+
+      if (editingId) {
+        await updatePermission(editingId, payload);
+      } else {
+        await createPermission(payload);
+      }
+      setIsDrawerOpen(false);
+    } catch (err) {
+      alert(err.message || 'Failed to save permission');
     }
-    setIsDrawerOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setData(data.filter(d => d.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      try {
+        await deletePermission(id);
+      } catch (err) {
+        alert(err.message || 'Failed to delete permission');
+      }
+    }
   };
 
-  const filtered = data.filter(item =>
+  const filtered = permissions.filter(item =>
     (item.module || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (getRoleName(item.roleId) || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading && permissions.length === 0) {
+    return (
+      <div className="p-6">
+        <SkeletonTable rows={4} />
+      </div>
+    );
+  }
 
   return (
     <>
