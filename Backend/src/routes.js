@@ -26,6 +26,7 @@ const projectRoutes = require('./modules/project/project.routes');
 const databaseRoutes = require('./modules/database/database.routes');
 const storageRoutes = require('./modules/storage/storage.routes');
 const rbacRoutes = require('./modules/rbac/rbac.routes');
+const rlsRoutes = require('./modules/rls/rls.routes');
 
 const router = express.Router();
 
@@ -55,5 +56,6 @@ router.use('/projects', projectRoutes);
 router.use('/database', databaseRoutes);
 router.use('/storage/v1', storageRoutes);
 router.use('/rbac', rbacRoutes);
+router.use('/rls', rlsRoutes);
 
 module.exports = router;
