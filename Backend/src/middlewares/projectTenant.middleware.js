@@ -14,6 +14,9 @@ const projectTenantMiddleware = async (req, res, next) => {
   try {
     let projectRef = req.headers['x-project-ref'] || req.headers['x-project-id'] || req.params.projectId || req.params.id;
     let apiKey = req.headers['apikey'] || req.query.apikey;
+    if (req.originalUrl && req.originalUrl.includes('/rbac/')) {
+      apiKey = null;
+    }
     let bearerToken = null;
 
     if (!projectRef) {
@@ -62,10 +65,43 @@ const projectTenantMiddleware = async (req, res, next) => {
         include: { project: true }
       });
       if (!apiKeyRecord || !apiKeyRecord.project) {
-        return sendError(res, 'Invalid or revoked API key.', 'UNAUTHORIZED', [], 401);
+        // Fallback to projectRef first, then bearerToken
+        if (projectRef) {
+          project = await prisma.project.findFirst({
+            where: {
+              OR: [
+                { refId: projectRef },
+                { id: projectRef }
+              ]
+            }
+          });
+        }
+        if (!project && bearerToken) {
+          try {
+            const decoded = jwt.decode(bearerToken);
+            if (decoded && (decoded.refId || decoded.projectId)) {
+              const lookup = decoded.refId || decoded.projectId;
+              project = await prisma.project.findFirst({
+                where: {
+                  OR: [
+                    { refId: lookup },
+                    { id: lookup }
+                  ]
+                }
+              });
+            }
+          } catch (err) { }
+        }
+        if (!project) {
+          const isAuthRoute = req.originalUrl && req.originalUrl.includes('/auth/');
+          if (!isAuthRoute) {
+            return sendError(res, 'Invalid or revoked API key.', 'UNAUTHORIZED', [], 401);
+          }
+        }
+      } else {
+        project = apiKeyRecord.project;
       }
-      project = apiKeyRecord.project;
-    } 
+    }
     // 2. Fallback to x-project-ref/id for backward compatibility
     else if (projectRef) {
       project = await prisma.project.findFirst({
@@ -79,7 +115,7 @@ const projectTenantMiddleware = async (req, res, next) => {
       if (!project) {
         return sendError(res, 'Project not found with the provided identifier.', 'NOT_FOUND', [], 404);
       }
-    } 
+    }
     // 3. Fallback to token context decoding if present
     else if (bearerToken) {
       try {

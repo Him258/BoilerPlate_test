@@ -541,6 +541,8 @@ model Project {
   roles               Role[]
   userRoles           UserRole[]
 
+    rlsPolicies         RlsPolicy[]
+
   @@index([tenantId])
 }
 
@@ -619,5 +621,23 @@ model StorageFile {
   @@unique([bucketId, path])
   @@index([projectId])
   @@index([bucketId])
+}
+
+
+model RlsPolicy {
+  id         String   @id @default(uuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tableName  String
+  policyName String
+  operation  String
+  role       String
+  condition  String   @db.Text
+  enabled    Boolean  @default(true)
+  createdBy  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId])
 }
 
