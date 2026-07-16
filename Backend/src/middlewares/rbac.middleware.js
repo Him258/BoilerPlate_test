@@ -76,8 +76,8 @@ const requirePermission = (requiredPermission) => {
               permissionKeys.add('*');
             }
             for (const rp of mapping.role.rolePermissions) {
-              if (rp.permission.status === 'Active') {
-                permissionKeys.add(rp.permission.permissionKey);
+              if (rp.permission) {
+                permissionKeys.add(`${rp.permission.resource}.${rp.permission.action}`);
               }
             }
           }
@@ -127,8 +127,8 @@ const requirePermission = (requiredPermission) => {
               permissionKeys.add('*');
             }
             for (const rp of role.rolePermissions) {
-              if (rp.permission.status === 'Active') {
-                permissionKeys.add(rp.permission.permissionKey);
+              if (rp.permission) {
+                permissionKeys.add(`${rp.permission.resource}.${rp.permission.action}`);
               }
             }
           }
@@ -193,8 +193,8 @@ const requirePermission = (requiredPermission) => {
 <<<<<<< HEAD
             if (anonRole) {
               for (const rp of anonRole.rolePermissions) {
-                if (rp.permission.status === 'Active') {
-                  permissionKeys.add(rp.permission.permissionKey);
+                if (rp.permission) {
+                  permissionKeys.add(`${rp.permission.resource}.${rp.permission.action}`);
                 }
               }
 =======
@@ -297,8 +297,8 @@ const userHasPermission = async (userId, permissionKey, projectId = null) => {
       }
 
       for (const rp of role.rolePermissions) {
-        if (rp.permission && rp.permission.status === 'Active') {
-          permissionKeys.add(rp.permission.permissionKey);
+        if (rp.permission) {
+          permissionKeys.add(`${rp.permission.resource}.${rp.permission.action}`);
         }
       }
     }

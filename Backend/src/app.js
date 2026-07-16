@@ -29,6 +29,12 @@ app.use(morgan('dev'));
 const path = require('path');
 
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+
+// Public independent API namespaces
+const publicApiRoutes = require('./public_api_routes');
+app.use('/api', publicApiRoutes);
+
+// Backward compatible v1 routes
 app.use('/api/v1', routes);
 
 app.get('/health', (req, res) => {

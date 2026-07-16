@@ -257,29 +257,52 @@ export function ProjectDetails() {
             </div>
           </div>
 
-          {/* Quickstart SDK */}
+          {/* Project APIs */}
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <div className="flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
               <Terminal className="h-5 w-5 text-slate-500" />
-              <h3 className="font-semibold text-slate-950 dark:text-white">Client SDK Setup</h3>
+              <h3 className="font-semibold text-slate-950 dark:text-white">REST APIs</h3>
             </div>
+            
             <div className="mt-4 space-y-4">
               <div>
-                <span className="text-xs text-slate-500 block">1. Install package</span>
-                <code className="mt-1 block bg-slate-900 text-slate-200 p-2.5 rounded font-mono text-xs">
-                  npm install @kiaan/kiaan-js
-                </code>
+                <span className="text-xs text-slate-500 block mb-1">Project API URL</span>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value="http://localhost:5000/api"
+                    className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-1.5 text-xs w-full font-mono text-slate-800 dark:text-slate-300"
+                  />
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard('http://localhost:5000/api', 'apiurl')}>
+                    {copiedField === 'apiurl' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
+                  </Button>
+                </div>
               </div>
-              <div>
-                <span className="text-xs text-slate-500 block">2. Initialize Client</span>
-                <pre className="mt-1 bg-slate-900 text-slate-200 p-2.5 rounded font-mono text-[10px] overflow-x-auto">
-{`import { createClient } from '@kiaan/kiaan-js'
 
-const kiaan = createClient(
-  'https://${currentProject.refId}.kiaan.dev',
-  '${anonKey.substring(0, 15)}...'
-)`}
-                </pre>
+              <div>
+                <span className="text-xs text-slate-500 block mb-2">Available API Namespaces</span>
+                <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2">
+                  {[
+                    { name: 'Auth', path: '/auth/v1' },
+                    { name: 'Tenants', path: '/tenants/v1' },
+                    { name: 'Projects', path: '/projects/v1' },
+                    { name: 'Database / REST', path: '/rest/v1' },
+                    { name: 'RBAC', path: '/rbac/v1' },
+                    { name: 'RLS', path: '/rls/v1' },
+                    { name: 'Storage', path: '/storage/v1' }
+                  ].map((api, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 p-2 rounded border border-slate-100 dark:border-slate-800">
+                      <div>
+                        <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">{api.name}</div>
+                        <div className="text-[10px] text-slate-500 font-mono mt-0.5">{api.path}</div>
+                      </div>
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => copyToClipboard(api.path, `path-${idx}`)}>
+                        {copiedField === `path-${idx}` ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
