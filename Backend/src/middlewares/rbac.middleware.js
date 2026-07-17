@@ -67,8 +67,6 @@ const requirePermission = (requiredPermission) => {
           if (req.user.role === 'Super Admin' || req.user.roleId === 'Super Admin') {
             permissionKeys.add('*');
           }
-<<<<<<< HEAD
-
           userRoleName = userRoleMappings.map(urm => urm.role.name || urm.role.roleName).join(', ') || 'none';
 
           for (const mapping of userRoleMappings) {
@@ -81,7 +79,7 @@ const requirePermission = (requiredPermission) => {
               }
             }
           }
-        } else if (req.user.sub) {
+        } else if (req.user.sub || req.user.role) {
           // CASE B: Project Plane User
           const roleNames = Array.isArray(req.user.role)
             ? req.user.role
@@ -89,29 +87,14 @@ const requirePermission = (requiredPermission) => {
 
           userRoleName = roleNames.join(', ');
 
-=======
-        }
-        // CASE B: Project Plane User
-        // Has req.user.sub attached by projectUserAuthMiddleware, or req.user.role
-        else if (req.user.sub || req.user.role) {
-          const roleName = req.user.role || 'authenticated';
-          userRoleName = roleName;
-
-          // Look up permissions associated with this project-isolated role and include 'authenticated' permissions
->>>>>>> f46c917 (kiran)
           const roles = await prisma.role.findMany({
             where: {
               projectId,
               OR: [
-<<<<<<< HEAD
                 { name: { in: roleNames } },
-                { roleName: { in: roleNames } }
-=======
-                { name: roleName },
-                { roleName: roleName },
+                { roleName: { in: roleNames } },
                 { name: 'authenticated' },
                 { roleName: 'authenticated' }
->>>>>>> f46c917 (kiran)
               ]
             },
             include: {
@@ -121,7 +104,6 @@ const requirePermission = (requiredPermission) => {
             }
           });
 
-<<<<<<< HEAD
           for (const role of roles) {
             if (role.name === 'Admin' || role.roleName === 'Admin') {
               permissionKeys.add('*');
@@ -139,67 +121,29 @@ const requirePermission = (requiredPermission) => {
           });
           if (apiKeyRecord && apiKeyRecord.keyType === 'anon') {
             userRoleName = 'anon';
-            const anonRole = await prisma.role.findFirst({
+            const roles = await prisma.role.findMany({
               where: {
                 projectId,
                 OR: [
                   { name: 'anon' },
-                  { roleName: 'anon' }
+                  { roleName: 'anon' },
+                  { name: 'authenticated' },
+                  { roleName: 'authenticated' }
                 ]
               },
               include: {
                 rolePermissions: {
                   include: { permission: true }
-=======
-          userPermissions = roles.flatMap(r => r.rolePermissions.map(rp => rp.permission));
-        }
-      } 
-      // CASE C: API Key Authentication (Fallback when no JWT is provided)
-      else {
-        const authHeader = req.headers.authorization;
-        const apiKey = req.headers['apikey'] || req.query.apikey || (authHeader && !authHeader.startsWith('Bearer ') ? authHeader : null);
-
-        if (apiKey) {
-          const apiKeyRecord = await prisma.projectApiKey.findUnique({
-            where: { keyToken: apiKey }
-          });
-
-          if (apiKeyRecord) {
-            if (apiKeyRecord.keyType === 'service_role') {
-              // service_role has full access bypass
-              return next();
-            } else if (apiKeyRecord.keyType === 'anon') {
-              userRoleName = 'anon';
-              // Check if project has custom permissions mapped for 'anon' or fallback to 'authenticated'
-              const roles = await prisma.role.findMany({
-                where: {
-                  projectId,
-                  OR: [
-                    { name: 'anon' },
-                    { roleName: 'anon' },
-                    { name: 'authenticated' },
-                    { roleName: 'authenticated' }
-                  ]
-                },
-                include: {
-                  rolePermissions: {
-                    include: { permission: true }
-                  }
->>>>>>> f46c917 (kiran)
                 }
               }
             });
 
-<<<<<<< HEAD
-            if (anonRole) {
-              for (const rp of anonRole.rolePermissions) {
+            for (const role of roles) {
+              for (const rp of role.rolePermissions) {
                 if (rp.permission) {
                   permissionKeys.add(`${rp.permission.resource}.${rp.permission.action}`);
                 }
               }
-=======
-              userPermissions = roles.flatMap(r => r.rolePermissions.map(rp => rp.permission));
->>>>>>> f46c917 (kiran)
             }
           }
         }

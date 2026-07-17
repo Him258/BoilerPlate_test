@@ -3,19 +3,34 @@ const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 const { getClientForProject } = require('./projectConnection');
 
-const SCHEMA_PATH = path.join(__dirname, 'resources', 'base_schema.sql');
+const CORE_SCHEMA_PATH = path.join(__dirname, 'resources', 'core', 'schema.sql');
 const SYSTEM_TABLES = ['users', 'sessions', 'buckets', 'objects', 'auth_audit_logs'];
 
-exports.bootstrapSchema = async ({ dbHost, dbPort, dbName, dbUsername, dbPassword }) => {
-  // Read schema SQL file
-  if (!fs.existsSync(SCHEMA_PATH)) {
-    throw new Error(`Schema file not found at path: ${SCHEMA_PATH}`);
+exports.bootstrapSchema = async ({ dbHost, dbPort, dbName, dbUsername, dbPassword, modules = [] }) => {
+  // Read core schema
+  if (!fs.existsSync(CORE_SCHEMA_PATH)) {
+    throw new Error(`Core schema file not found at path: ${CORE_SCHEMA_PATH}`);
   }
 
-  const sqlContent = fs.readFileSync(SCHEMA_PATH, 'utf8');
+  const sqlContents = [fs.readFileSync(CORE_SCHEMA_PATH, 'utf8')];
+
+  // Iterate over modules and load them
+  if (Array.isArray(modules)) {
+    for (const mod of modules) {
+      const modulePath = path.join(__dirname, 'resources', 'modules', mod, 'schema.sql');
+      if (fs.existsSync(modulePath)) {
+        console.log(`[SchemaService] Loading module schema: ${mod}`);
+        sqlContents.push(fs.readFileSync(modulePath, 'utf8'));
+      } else {
+        console.warn(`[SchemaService] Module schema not found for: ${mod}, skipping...`);
+      }
+    }
+  }
+
+  const combinedSql = sqlContents.join('\n\n');
 
   // Split into clean SQL statements
-  const statements = sqlContent
+  const statements = combinedSql
     .split(';')
     .map(stmt => {
       return stmt

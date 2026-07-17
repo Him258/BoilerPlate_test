@@ -3,13 +3,14 @@ const { sendSuccess, sendError } = require('../../core/response');
 
 exports.createProject = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, projectType, modules } = req.body;
     const tenantId = req.user.tenantId;
     const creatorId = req.user.userId;
 
-    const data = await projectService.createProject({ name, tenantId, creatorId });
+    const data = await projectService.createProject({ name, tenantId, creatorId, projectType, modules });
     return sendSuccess(res, 'Project created successfully', data, null, 201);
   } catch (error) {
+    require('fs').appendFileSync('error.log', '\nCREATE PROJECT ERROR: ' + error.stack + '\n');
     console.error('Error creating project:', error);
     return sendError(res, error.message || 'Failed to create project', 'INTERNAL_ERROR', [], 500);
   }

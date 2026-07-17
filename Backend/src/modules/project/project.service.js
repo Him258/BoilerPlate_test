@@ -15,13 +15,26 @@ const generateRefId = (name) => {
   return `${cleanName}-${randomStr}`;
 };
 
-exports.createProject = async ({ name, tenantId, creatorId }) => {
+exports.createProject = async ({ name, tenantId, creatorId, projectType, modules }) => {
   // Check if tenant exists
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId }
   });
   if (!tenant) {
     throw new Error('Tenant not found');
+  }
+
+  // Handle legacy projectType mapping to modules
+  let finalModules = modules || [];
+  if (projectType && (!modules || modules.length === 0)) {
+    switch (projectType.toLowerCase()) {
+      case 'hospital':
+        finalModules = ['patients', 'doctors', 'appointments', 'nurses'];
+        break;
+      // other templates can be added here
+      default:
+        finalModules = [];
+    }
   }
 
   const refId = generateRefId(name);
@@ -50,7 +63,8 @@ exports.createProject = async ({ name, tenantId, creatorId }) => {
         dbUsername,
         dbPasswordEncrypted,
         jwtSecretEncrypted,
-        status: 'provisioning'
+        status: 'provisioning',
+        modules: finalModules
       }
     });
 
@@ -196,7 +210,7 @@ exports.createProject = async ({ name, tenantId, creatorId }) => {
     await provisioningService.provisionDatabase({ dbName, dbUsername, dbPassword });
 
     // B. Bootstrap Schema
-    await schemaService.bootstrapSchema({ dbHost, dbPort, dbName, dbUsername, dbPassword });
+    await schemaService.bootstrapSchema({ dbHost, dbPort, dbName, dbUsername, dbPassword, modules: finalModules });
 
     // C. Mark as active
     await prisma.project.update({
@@ -261,7 +275,8 @@ exports.retryProvisioning = async (id) => {
       dbPort: project.dbPort, 
       dbName: project.dbName, 
       dbUsername: project.dbUsername, 
-      dbPassword 
+      dbPassword,
+      modules: typeof project.modules === 'string' ? JSON.parse(project.modules) : (project.modules || [])
     });
 
     // Mark as active

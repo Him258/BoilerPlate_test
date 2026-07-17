@@ -535,6 +535,8 @@ model Project {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
+  modules             Json?
+
   apiKeys             ProjectApiKey[]
   authProviders       ProjectAuthProvider[]
   emailTemplates      ProjectEmailTemplate[]
@@ -624,8 +626,6 @@ model StorageFile {
   @@index([bucketId])
 }
 
-<<<<<<< HEAD
-
 model RlsPolicy {
   id         String   @id @default(uuid())
   projectId  String
@@ -643,7 +643,6 @@ model RlsPolicy {
   @@index([projectId])
 }
 
-=======
 model Message {
   id         String   @id @default(uuid())
   tenantId   String
@@ -660,5 +659,3 @@ model Message {
   @@index([receiverId])
 }
 
-
->>>>>>> f46c917 (kiran)

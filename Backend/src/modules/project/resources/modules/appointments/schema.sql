@@ -1,0 +1,14 @@
+-- Appointments Table
+CREATE TABLE IF NOT EXISTS `appointments` (
+  `id` CHAR(36) NOT NULL,
+  `patientId` VARCHAR(36) NOT NULL,
+  `patientName` VARCHAR(255) NOT NULL,
+  `doctorId` VARCHAR(36) NOT NULL,
+  `doctorName` VARCHAR(255) NOT NULL,
+  `date` VARCHAR(50) NOT NULL,
+  `time` VARCHAR(50) NOT NULL,
+  `status` VARCHAR(50) DEFAULT 'Scheduled',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
